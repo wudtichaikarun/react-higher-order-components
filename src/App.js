@@ -12,13 +12,27 @@ function forAuth(WrappedComponent) {
   } 
 }
 
+// Use Higher Order Component Log message 
+function logProps(WrappedComponent) {
+  return class extends Component {
+    componentWillReceiveProps(nextProps) {
+      console.log('Prev Props', this.props)
+      console.log('Next Props', nextProps)
+    }
+
+    render() {
+      return <WrappedComponent {...this.props} />
+    }
+  }
+}
+
 // Nomal stateless fun. component
 const ProtectedComponent = ({ auth }) => (
   <h2>Protected Content: {auth.isLogin.toString()}</h2>
 )
 
 // Higher Order Component
-const EnhancedComponent = forAuth(ProtectedComponent)
+const EnhancedComponent = logProps(forAuth(ProtectedComponent))
 
 class App extends Component {
 
