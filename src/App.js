@@ -1,22 +1,20 @@
 import React, { Component } from 'react'
 
 function forAuth(WrappedComponent) {
-  // nomal way use react component
-  /*
   return class extends Component {
     render() {
       const props = this.props
-      return props.isLogin ? <WrappedComponent {...props } /> : null
-    }
-  } */
+      const { isLogin, credential, ...rest } = props
+      const auth = { isLogin, credential }
 
-  // best way use stateless fun. component
-  return props => props.isLogin ? <WrappedComponent {...props }/> : null
+      return props.isLogin ? <WrappedComponent {...rest } auth={auth} /> : null
+    }
+  } 
 }
 
 // Nomal stateless fun. component
-const ProtectedComponent = ({ isLogin }) => (
-  <h2>Protected Content: {isLogin.toString()}</h2>
+const ProtectedComponent = ({ auth }) => (
+  <h2>Protected Content: {auth.isLogin.toString()}</h2>
 )
 
 // Higher Order Component
@@ -25,20 +23,30 @@ const EnhancedComponent = forAuth(ProtectedComponent)
 class App extends Component {
 
   state = {
-    isLogin: false
+    isLogin: false,
+    credential: {}
   }
 
   toggleLogin = () => {
-    this.setState((prevState) => ({ isLogin: !prevState.isLogin}))
+    this.setState((prevState) => {
+      const { isLogin } = prevState
+
+      if(isLogin) return { isLogin: false, credential: {} }
+
+      return {
+        isLogin: true,
+        credential: { email: 'romantic@hotmail.com', accessToken: 'token' }
+      }
+    })
   }
 
   render() {
     return (
       <div>
         <button onClick={this.toggleLogin}>Toggle</button>
-        <EnhancedComponent isLogin={this.state.isLogin} />
+        <EnhancedComponent {...this.state} />
       </div>
-    );
+    )
   }
 }
 
