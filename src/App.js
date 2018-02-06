@@ -14,6 +14,9 @@ function forAuth(WrappedComponent) {
 
 // Use Higher Order Component Log message 
 function logProps(WrappedComponent) {
+  /* Compositon Note: use compositon beter than inheritance
+  link we talking before composition over inneritance
+  */
   return class extends Component {
     componentWillReceiveProps(nextProps) {
       console.log('Prev Props', this.props)
@@ -24,6 +27,18 @@ function logProps(WrappedComponent) {
       return <WrappedComponent {...this.props} />
     }
   }
+
+  // Inheritance Inversion
+  /*return class extends WrappedComponent {
+    componentWillReceiveProps(nextProps) {
+      console.log('Prev Props', this.props)
+      console.log('Next Props', nextProps)
+    }
+
+    render() {
+      return super.render() 
+    }
+  }*/
 }
 
 // Nomal stateless fun. component
