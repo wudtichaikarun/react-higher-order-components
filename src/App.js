@@ -46,14 +46,14 @@ function fetchApi(endpoint) {
   })
 }
 
-function fetchData(WrappedComponent) {
+function fetchData(WrappedComponent, endpoint) {
   class Enhance extends Component {
     state = {
       fetchData: {}
     }
 
     componentDidMount() {
-      fetchApi(WrappedComponent.API_ENDPOINT)
+      fetchApi(endpoint)
         .then(fetchData => this.setState({ fetchData }))
         .catch(err => console.log(err.message))
     }
@@ -67,7 +67,6 @@ function fetchData(WrappedComponent) {
 
 // Component ------------------------------------
 class ProtectedComponent extends Component {
-  static API_ENDPOINT = '/articles'
 
   state = {
     fetchData: {}
@@ -89,7 +88,10 @@ class ProtectedComponent extends Component {
 /* ###############################################
         Component (Higher Order Component)
    ############################################### */
-const EnhancedComponent = fetchData(logProps(forAuth(ProtectedComponent)))
+const EnhancedComponent = fetchData(
+  logProps(forAuth(ProtectedComponent)),
+  '/articles'
+)
 
 // Component ------------------------------------
 class App extends Component {
