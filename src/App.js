@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import hoistNonReactStatic from 'hoist-non-react-statics'
 
 function forAuth(WrappedComponent) {
-  return class extends Component {
+  class Enhance extends Component {
     render() {
       const props = this.props
       const { isLogin, credential, ...rest } = props
@@ -10,14 +11,13 @@ function forAuth(WrappedComponent) {
       return props.isLogin ? <WrappedComponent {...rest } auth={auth} /> : null
     }
   } 
+
+  return hoistNonReactStatic(Enhance, WrappedComponent)
 }
 
 // Use Higher Order Component Log message 
 function logProps(WrappedComponent) {
-  /* Compositon Note: use compositon beter than inheritance
-  link we talking before composition over inneritance
-  */
-  return class extends Component {
+  class Enhance extends Component {
     componentWillReceiveProps(nextProps) {
       console.log('Prev Props', this.props)
       console.log('Next Props', nextProps)
@@ -27,6 +27,8 @@ function logProps(WrappedComponent) {
       return <WrappedComponent {...this.props} />
     }
   }
+
+  return hoistNonReactStatic(Enhance, WrappedComponent)
 }
 
 // API MOCKUP
@@ -45,7 +47,7 @@ function fetchApi(endpoint) {
 }
 
 function fetchData(WrappedComponent) {
-  return class extends Component {
+  class Enhance extends Component {
     state = {
       fetchData: {}
     }
@@ -59,6 +61,8 @@ function fetchData(WrappedComponent) {
       return <WrappedComponent {...this.props } {...this.state }/>
     }
   }
+
+  return hoistNonReactStatic(Enhance, WrappedComponent)
 }
 
 // Component ------------------------------------
@@ -82,9 +86,10 @@ class ProtectedComponent extends Component {
     )
   }
 }
-
-// Component (Higher Order Component)------------
-const EnhancedComponent = logProps(forAuth(fetchData(ProtectedComponent)))
+/* ###############################################
+        Component (Higher Order Component)
+   ############################################### */
+const EnhancedComponent = fetchData(logProps(forAuth(ProtectedComponent)))
 
 // Component ------------------------------------
 class App extends Component {
